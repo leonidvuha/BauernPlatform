@@ -3,10 +3,6 @@
 import Link from "next/link";
 import { useState, type FormEvent } from "react";
 
-const TOKEN_KEY = "bp_token";
-
-type LoginResponse = { access_token: string };
-
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -26,19 +22,15 @@ export default function LoginPage() {
       });
 
       if (!res.ok) {
-        const body = (await res.json().catch(() => null)) as
-          | { message?: string | string[] }
-          | null;
+        const body = (await res.json().catch(() => null)) as {
+          message?: string | string[];
+        } | null;
         const msg = Array.isArray(body?.message)
           ? body.message.join(", ")
-          : body?.message ?? "Anmeldung fehlgeschlagen";
+          : (body?.message ?? "Anmeldung fehlgeschlagen");
         throw new Error(msg);
       }
 
-      const data = (await res.json()) as LoginResponse;
-      localStorage.setItem(TOKEN_KEY, data.access_token);
-      // Notify Header (same tab) before navigating.
-      window.dispatchEvent(new StorageEvent("storage", { key: TOKEN_KEY }));
       window.location.assign("/");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unbekannter Fehler");

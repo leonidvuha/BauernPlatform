@@ -2,37 +2,30 @@
 
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
-import { useSyncExternalStore } from "react";
-
-const TOKEN_KEY = "bp_token";
-
-function subscribe(callback: () => void) {
-  window.addEventListener("storage", callback);
-  return () => window.removeEventListener("storage", callback);
-}
-
-function getSnapshot() {
-  return localStorage.getItem(TOKEN_KEY);
-}
-
-function getServerSnapshot() {
-  return null;
-}
+import { useState, useEffect } from "react";
 
 export default function Header() {
   const router = useRouter();
-  const token = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
-  const isLoggedIn = !!token;
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/auth/me", { credentials: "include" })
+      .then((res) => setIsLoggedIn(res.ok))
+      .catch(() => setIsLoggedIn(false));
+  }, []);
+
   const pathname = usePathname();
   const isHome = pathname === "/";
   const isProfileActive = pathname === "/profile";
   const isMyProductsActive = pathname === "/products/my";
 
-  const handleLogout = () => {
-    localStorage.removeItem(TOKEN_KEY);
-    window.dispatchEvent(new StorageEvent("storage", { key: TOKEN_KEY }));
+  const handleLogout = async () => {
+    await fetch("/api/auth/logout", {
+      method: "POST",
+      credentials: "include",
+    });
+    setIsLoggedIn(false);
     router.push("/");
-    router.refresh();
   };
 
   return (
@@ -112,7 +105,7 @@ export default function Header() {
               >
                 Meine Produkte
               </Link>
-            
+
               <button
                 type="button"
                 onClick={handleLogout}
