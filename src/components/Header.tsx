@@ -1,19 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useSyncExternalStore } from "react";
 
 const TOKEN_KEY = "bp_token";
 
-const categories = [
-  { label: "Alle", slug: "" },
-  { label: "Gemüse", slug: "gemuse" },
-  { label: "Obst und Beeren", slug: "obst-und-beeren" },
-  { label: "Bauern Produkte", slug: "bauern" },
-];
-
-// Subscribe to localStorage changes from other tabs.
 function subscribe(callback: () => void) {
   window.addEventListener("storage", callback);
   return () => window.removeEventListener("storage", callback);
@@ -23,7 +15,6 @@ function getSnapshot() {
   return localStorage.getItem(TOKEN_KEY);
 }
 
-// SSR snapshot: no localStorage on the server.
 function getServerSnapshot() {
   return null;
 }
@@ -32,10 +23,13 @@ export default function Header() {
   const router = useRouter();
   const token = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
   const isLoggedIn = !!token;
+  const pathname = usePathname();
+  const isHome = pathname === "/";
+  const isProfileActive = pathname === "/profile";
+  const isMyProductsActive = pathname === "/products/my";
 
   const handleLogout = () => {
     localStorage.removeItem(TOKEN_KEY);
-    // Notify same-tab subscribers (storage event fires only cross-tab).
     window.dispatchEvent(new StorageEvent("storage", { key: TOKEN_KEY }));
     router.push("/");
     router.refresh();
@@ -44,32 +38,85 @@ export default function Header() {
   return (
     <header className="bg-white shadow-sm">
       <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+        {/* LOGO */}
         <Link href="/" className="flex items-center gap-2">
-          <span className="text-2xl">🌾</span>
+          <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+            <circle cx="20" cy="20" r="20" fill="#16a34a" />
+            {/* Поля */}
+            <path
+              d="M8 28 Q20 23 32 28"
+              stroke="white"
+              strokeWidth="1.5"
+              fill="none"
+            />
+            <path
+              d="M6 31 Q20 25 34 31"
+              stroke="white"
+              strokeWidth="1.5"
+              fill="none"
+            />
+            {/*<path
+              d="M10 25 Q20 21 30 25"
+              stroke="white"
+              strokeWidth="1.5"
+              fill="none"
+            />*/}
+            {/* Стебло */}
+            <line
+              x1="20"
+              y1="24"
+              x2="20"
+              y2="12"
+              stroke="white"
+              strokeWidth="2"
+            />
+            {/* Лівий листок — горизонтальніший */}
+            <path
+              d="M20 17 C18 14 12 12 9 13 C11 15 17 17 20 17Z"
+              fill="white"
+            />
+            {/* Правий листок — горизонтальніший */}
+            <path
+              d="M20 17 C22 14 28 12 31 13 C29 15 23 17 20 17Z"
+              fill="white"
+            />
+            {/* Верхній листок */}
+            <path d="M20 15 Q15 11 20 6 Q25 11 20 15Z" fill="white" />
+          </svg>
           <span className="font-bold text-green-700 text-xl">
             BauernPlatform
           </span>
         </Link>
 
-        <nav className="flex items-center gap-5">
+        {/* Navigation */}
+        <nav className="flex items-center gap-3">
           {isLoggedIn ? (
             <>
               <Link
+                href="/profile"
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition border ${
+                  isProfileActive
+                    ? "bg-green-700 text-white border-green-700"
+                    : "bg-white text-green-700 border-green-700 hover:bg-green-50"
+                }`}
+              >
+                Mein Profil
+              </Link>
+              <Link
                 href="/products/my"
-                className="text-gray-700 hover:text-green-700"
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition border ${
+                  isMyProductsActive
+                    ? "bg-green-700 text-white border-green-700"
+                    : "bg-white text-green-700 border-green-700 hover:bg-green-50"
+                }`}
               >
                 Meine Produkte
               </Link>
-              <Link
-                href="/profile"
-                className="text-gray-700 hover:text-green-700"
-              >
-                Mein Profile
-              </Link>
+            
               <button
                 type="button"
                 onClick={handleLogout}
-                className="text-gray-600 hover:text-red-600 font-medium cursor-pointer"
+                className="px-4 py-2 rounded-lg text-gray-500 text-sm font-medium hover:text-gray-700 transition"
               >
                 Logout
               </button>
@@ -78,13 +125,14 @@ export default function Header() {
             <>
               <Link
                 href="/auth/register"
-                className="text-gray-600 hover:text-green-700"
+                className="px-4 py-2 rounded-lg border border-green-700 text-green-700 text-sm font-medium hover:bg-green-50 transition"
               >
                 Registrierung
               </Link>
+              <span className="text-gray-400 text-sm">oder</span>
               <Link
                 href="/auth/login"
-                className="text-gray-600 hover:text-green-700 font-medium"
+                className="px-4 py-2 rounded-lg bg-green-700 text-white text-sm font-medium hover:bg-green-800 transition"
               >
                 Login
               </Link>
@@ -92,20 +140,27 @@ export default function Header() {
           )}
         </nav>
       </div>
-
-      <div className="bg-green-50 border-t border-green-100">
-        <div className="max-w-6xl mx-auto px-4 py-2 flex gap-6">
-          {categories.map((cat) => (
-            <Link
-              key={cat.label}
-              href={cat.slug ? `/?category=${cat.slug}` : "/"}
-              className="text-sm text-green-800 hover:underline"
-            >
-              {cat.label}
-            </Link>
-          ))}
+      {/* Categories — shown on all pages except home */}
+      {!isHome && (
+        <div className="bg-green-700">
+          <div className="max-w-6xl mx-auto px-4 py-2 justify-center flex gap-1">
+            {[
+              { label: "Alle", slug: "" },
+              { label: "Gemüse", slug: "gemuse" },
+              { label: "Obst und Beeren", slug: "obst-und-beeren" },
+              { label: "Bauern Produkte", slug: "bauern" },
+            ].map((cat) => (
+              <Link
+                key={cat.label}
+                href={cat.slug ? `/?category=${cat.slug}` : "/"}
+                className="px-6 text-center text-sm font-bold text-white py-2 hover:bg-green-800 rounded-lg transition"
+              >
+                {cat.label}
+              </Link>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
     </header>
   );
 }
