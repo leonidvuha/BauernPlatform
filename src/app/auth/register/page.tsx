@@ -2,9 +2,6 @@
 
 import { useState, type FormEvent } from "react";
 
-const TOKEN_KEY = "bp_token";
-
-type RegisterResponse = { access_token: string };
 
 export default function RegisterPage() {
   const [fullName, setFullName] = useState("");
@@ -26,19 +23,19 @@ export default function RegisterPage() {
       });
 
       if (!res.ok) {
-        const body = (await res.json().catch(() => null)) as
-          | { message?: string | string[] }
-          | null;
-        const msg = Array.isArray(body?.message)
-          ? body.message.join(", ")
-          : body?.message ?? "Registrierung fehlgeschlagen";
-        throw new Error(msg);
+        const body = (await res.json().catch(() => null)) as {
+          message?: string;
+          errors?: { path: string[]; message: string }[];
+        } | null;
+
+        if (body?.errors && body.errors.length > 0) {
+          const msg = body.errors.map((e) => e.message).join(", ");
+          throw new Error(msg);
+        }
+
+        throw new Error(body?.message ?? "Registrierung fehlgeschlagen");
       }
 
-      const data = (await res.json()) as RegisterResponse;
-      localStorage.setItem(TOKEN_KEY, data.access_token);
-      // Notify Header (same tab) before navigating.
-      window.dispatchEvent(new StorageEvent("storage", { key: TOKEN_KEY }));
       window.location.assign("/");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unbekannter Fehler");
@@ -104,13 +101,17 @@ export default function RegisterPage() {
             name="password"
             type="password"
             required
-            minLength={8}
+            minLength={12}
             autoComplete="new-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder="Mindestens 8 Zeichen"
+            placeholder="Mindestens 12 Zeichen"
             className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-400"
           />
+          <p className="text-xs text-gray-500 mt-1">
+            Min. 12 Zeichen, Groß- und Kleinbuchstaben, Zahl und Sonderzeichen
+            (!@#$%^&*_-+=?)
+          </p>
         </div>
 
         {error && (
