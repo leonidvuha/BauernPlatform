@@ -35,7 +35,7 @@ export default function ProductCard({ product }: { product: Product }) {
         )}
 
         <div className="mt-auto pt-3 flex items-center justify-end border-t border-gray-100">
-          <span className="text-lg font-bold text-green-700">
+          <span className="text-lg font-bold text-gray-900">
             {priceFormatter.format(Number(product.price))}
             <span className="text-sm font-normal text-gray-400">
               {" "}
