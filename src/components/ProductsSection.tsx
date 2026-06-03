@@ -2,6 +2,8 @@ import ProductCard from "@/components/ProductCard";
 import Link from "next/link";
 import { api } from "@/lib/api";
 import { Product } from "@/types/product";
+import { Suspense } from "react";
+import Pagination from "@/components/Pagination";
 
 interface Props {
   page: number;
@@ -28,41 +30,9 @@ export default async function ProductsSection({ page }: Props) {
       </div>
 
       {meta.total_pages > 1 && (
-        <div className="flex justify-center gap-2 mt-8 flex-wrap">
-          {page > 1 && (
-            <Link
-              href={`/?page=${page - 1}`}
-              className="px-4 py-2 rounded-lg border border-green-700 text-green-700 hover:bg-green-50 transition"
-            >
-              ←
-            </Link>
-          )}
-
-          {Array.from({ length: meta.total_pages }, (_, i) => i + 1).map(
-            (p) => (
-              <Link
-                key={p}
-                href={`/?page=${p}`}
-                className={`px-4 py-2 rounded-lg transition ${
-                  p === page
-                    ? "bg-green-700 text-white"
-                    : "border border-green-700 text-green-700 hover:bg-green-50"
-                }`}
-              >
-                {p}
-              </Link>
-            ),
-          )}
-
-          {page < meta.total_pages && (
-            <Link
-              href={`/?page=${page + 1}`}
-              className="px-4 py-2 rounded-lg border border-green-700 text-green-700 hover:bg-green-50 transition"
-            >
-              →
-            </Link>
-          )}
-        </div>
+        <Suspense fallback={<div className="h-12" />}>
+          <Pagination meta={meta} />
+        </Suspense>
       )}
     </section>
   );
