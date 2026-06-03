@@ -2,29 +2,17 @@
 
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
 
-type Category = {
-  id: number;
-  name: string;
-  slug: string;
-};
+const CATEGORIES = [
+  { id: 1, name: "Gemüse", slug: "gemuse" },
+  { id: 2, name: "Obst und Beeren", slug: "obst-und-beeren" },
+  { id: 3, name: "BauernProdukte", slug: "bauern-produkte" },
+];
 
 export default function CategoryMenu() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const activeSlug = searchParams.get("category") ?? "";
-  const [categories, setCategories] = useState<Category[]>([]);
-
-  useEffect(() => {
-    fetch("/api/categories")
-      .then((res) => res.json())
-      .then((data) => {
-        console.log("Categories:", data);
-        setCategories(data);
-      })
-      .catch(() => setCategories([]));
-  }, []);
 
   return (
     <div className="bg-green-700">
@@ -32,25 +20,21 @@ export default function CategoryMenu() {
         <Link
           href="/products"
           className={`px-6 text-center text-sm font-bold py-2 rounded-lg transition
-            ${
-              activeSlug === "" && pathname === "/products"
-                ? "bg-white text-green-700"
-                : "text-white hover:bg-green-800"
-            }
+            ${activeSlug === "" && pathname === "/products"
+              ? "bg-white text-green-700"
+              : "text-white hover:bg-green-800"}
           `}
         >
           Alle
         </Link>
-        {categories.map((cat) => (
+        {CATEGORIES.map((cat) => (
           <Link
             key={cat.id}
             href={`/products?category=${cat.slug}`}
             className={`px-6 text-center text-sm font-bold py-2 rounded-lg transition
-              ${
-                activeSlug === cat.slug
-                  ? "bg-white text-green-700"
-                  : "text-white hover:bg-green-800"
-              }
+              ${activeSlug === cat.slug
+                ? "bg-white text-green-700"
+                : "text-white hover:bg-green-800"}
             `}
           >
             {cat.name}
