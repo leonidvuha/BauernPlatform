@@ -1,9 +1,7 @@
-import CategoryList from "@/components/CategoryList";
 import ProductsSection from "@/components/ProductsSection";
 import SearchBar from "@/components/SearchBar";
-import Hero from "@/components/Hero";
 
-export default async function HomePage({
+export default async function ProductsPage({
   searchParams,
 }: {
   searchParams: Promise<{ page?: string; category?: string }>;
@@ -14,8 +12,6 @@ export default async function HomePage({
 
   return (
     <div>
-      <Hero />
-      <CategoryList />
       <SearchBar />
       <ProductsSection page={page} category={category} />
     </div>

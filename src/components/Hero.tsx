@@ -1,13 +1,17 @@
+import Image from "next/image";
+
 export default function Hero() {
   return (
     <section
       className="relative rounded-2xl overflow-hidden mb-10"
       style={{ minHeight: 320 }}
     >
-      <img
+      <Image
         src="https://images.unsplash.com/photo-1610348725531-843dff563e2c?w=1400&q=80"
-        alt="Bauernhof"
-        className="absolute inset-0 w-full h-full object-cover"
+        alt="Bauernhof platform"
+        fill
+        className="object-cover"
+        priority
       />
       <div className="absolute inset-0 bg-green-900 opacity-50" />
       <div

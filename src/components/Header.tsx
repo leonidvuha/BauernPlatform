@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
+import CategoryMenu from "./CategoryMenu";
 
 export default function Header() {
   const router = useRouter();
@@ -133,26 +134,10 @@ export default function Header() {
           )}
         </nav>
       </div>
-      {/* Categories — shown on all pages except home */}
       {!isHome && (
-        <div className="bg-green-700">
-          <div className="max-w-6xl mx-auto px-4 py-2 justify-center flex gap-1">
-            {[
-              { label: "Alle", slug: "" },
-              { label: "Gemüse", slug: "gemuse" },
-              { label: "Obst und Beeren", slug: "obst-und-beeren" },
-              { label: "Bauern Produkte", slug: "bauern" },
-            ].map((cat) => (
-              <Link
-                key={cat.label}
-                href={cat.slug ? `/?category=${cat.slug}` : "/"}
-                className="px-6 text-center text-sm font-bold text-white py-2 hover:bg-green-800 rounded-lg transition"
-              >
-                {cat.label}
-              </Link>
-            ))}
-          </div>
-        </div>
+        <Suspense fallback={<div className="h-10 bg-green-700" />}>
+          <CategoryMenu />
+        </Suspense>
       )}
     </header>
   );

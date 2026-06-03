@@ -30,7 +30,7 @@ export default function LoginPage() {
           : (body?.message ?? "Anmeldung fehlgeschlagen");
         throw new Error(msg);
       }
-
+      localStorage.removeItem("bp_token");
       window.location.assign("/");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unbekannter Fehler");
