@@ -2,7 +2,6 @@
 
 import { useState, type FormEvent } from "react";
 
-
 export default function RegisterPage() {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
@@ -35,7 +34,7 @@ export default function RegisterPage() {
 
         throw new Error(body?.message ?? "Registrierung fehlgeschlagen");
       }
-
+      localStorage.removeItem("bp_token");
       window.location.assign("/");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unbekannter Fehler");
