@@ -3,6 +3,7 @@ import ProductsSection from "@/components/ProductsSection";
 import SearchBar from "@/components/SearchBar";
 import Hero from "@/components/Hero";
 
+
 export default async function HomePage({
   searchParams,
 }: {
