@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Product } from "@/types/product";
+import Image from "next/image";
 
 const priceFormatter = new Intl.NumberFormat("de-DE", {
   style: "currency",
@@ -12,11 +13,12 @@ const FALLBACK_IMAGE =
 export default function ProductCard({ product }: { product: Product }) {
   return (
     <article className="bg-white rounded-2xl overflow-hidden flex flex-col shadow-md hover:shadow-lg transition-all duration-200 border border-gray-100">
-      <div className="w-full h-36 overflow-hidden bg-gray-100">
-        <img
+      <div className="w-full h-36 overflow-hidden bg-gray-100 relative">
+        <Image
           src={product.img_url || FALLBACK_IMAGE}
           alt={product.title}
-          className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+          fill
+          className="object-cover hover:scale-105 transition-transform duration-300"
         />
       </div>
       <div className="p-4 flex flex-col gap-2 flex-1">

@@ -1,5 +1,4 @@
 import ProductCard from "@/components/ProductCard";
-import Link from "next/link";
 import { api } from "@/lib/api";
 import { Product } from "@/types/product";
 import { Suspense } from "react";
@@ -7,14 +6,15 @@ import Pagination from "@/components/Pagination";
 
 interface Props {
   page: number;
+  category?: string;
 }
 
-export default async function ProductsSection({ page }: Props) {
+export default async function ProductsSection({ page, category }: Props) {
   let products: Product[] = [];
   let meta = { current_page: 1, per_page: 12, total_items: 0, total_pages: 1 };
 
   try {
-    const data = await api.products.getAll(page);
+    const data = await api.products.getAll(page, category);
     products = data.products;
     meta = data.meta;
   } catch {
