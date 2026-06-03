@@ -4,8 +4,13 @@ const BACKEND_URL = process.env.BACKEND_URL ?? "http://localhost:8080";
 
 export const api = {
   products: {
-    getAll: async (): Promise<ProductsResponse> => {
-      const res = await fetch(`${BACKEND_URL}/api/products`);
+    getAll: async (page = 1): Promise<ProductsResponse> => {
+      const res = await fetch(
+        `${BACKEND_URL}/api/products?page=${page}&limit=20`,
+      );
+      next: {
+        revalidate: 60;
+      }
       if (!res.ok) throw new Error("Failed to fetch products");
       return res.json();
     },
