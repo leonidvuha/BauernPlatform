@@ -18,7 +18,7 @@ export default function RootLayout({
       <body className="bg-gray-50 min-h-screen">
         <AuthProvider>
           <Header />
-          <main className="max-w-6xl mx-auto px-4 py-6">{children}</main>
+          <main className="max-w-6xl mx-auto px-4 py-2">{children}</main>
         </AuthProvider>
       </body>
     </html>
