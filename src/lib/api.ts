@@ -1,4 +1,4 @@
-import type { ProductsResponse } from "@/types/product";
+import type { Product, ProductsResponse } from "@/types/product";
 import { UserProfile } from "@/types/user";
 
 const BACKEND_URL = process.env.BACKEND_URL ?? "http://localhost:8080";
@@ -26,6 +26,13 @@ export const api = {
     getMy: async (): Promise<ProductsResponse> => {
       const res = await fetch(`${BACKEND_URL}/api/users/my-products`);
       if (!res.ok) throw new Error("Failed to fetch my products");
+      return res.json();
+    },
+    getById: async (id: string): Promise<Product> => {
+      const res = await fetch(`${BACKEND_URL}/api/products/${id}`, {
+        next: { revalidate: 60 },
+      });
+      if (!res.ok) throw new Error("Failed to fetch product");
       return res.json();
     },
   },
