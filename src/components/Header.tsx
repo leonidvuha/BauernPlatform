@@ -2,18 +2,13 @@
 
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
-import { useState, useEffect, Suspense } from "react";
+import { Suspense } from "react";
 import CategoryMenu from "./CategoryMenu";
+import { useAuthStore } from "@/store/authStore";
 
 export default function Header() {
   const router = useRouter();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  useEffect(() => {
-    fetch("/api/auth/me", { credentials: "include" })
-      .then((res) => setIsLoggedIn(res.ok))
-      .catch(() => setIsLoggedIn(false));
-  }, []);
+  const { isLoggedIn, logout, isLoading } = useAuthStore();
 
   const pathname = usePathname();
   const isHome = pathname === "/";
@@ -25,7 +20,7 @@ export default function Header() {
       method: "POST",
       credentials: "include",
     });
-    setIsLoggedIn(false);
+    logout();
     router.push("/");
   };
 
@@ -83,53 +78,49 @@ export default function Header() {
         </Link>
 
         {/* Navigation */}
-        <nav className="flex items-center gap-3">
-          {isLoggedIn ? (
-            <>
-              <Link
-                href="/profile"
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition border ${
-                  isProfileActive
-                    ? "bg-green-700 text-white border-green-700"
-                    : "bg-white text-green-700 border-green-700 hover:bg-green-50"
-                }`}
-              >
-                Mein Profil
-              </Link>
-              <Link
-                href="/products/my"
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition border ${
-                  isMyProductsActive
-                    ? "bg-green-700 text-white border-green-700"
-                    : "bg-white text-green-700 border-green-700 hover:bg-green-50"
-                }`}
-              >
-                Meine Produkte
-              </Link>
 
-              <button
-                type="button"
-                onClick={handleLogout}
-                className="px-4 py-2 rounded-lg text-gray-500 text-sm font-medium hover:text-gray-700 transition"
-              >
-                Logout
-              </button>
-            </>
-          ) : (
+        <nav className="flex items-center gap-3">
+          {isLoading ? null : (
             <>
-              <Link
-                href="/auth/register"
-                className="px-4 py-2 rounded-lg border border-green-700 text-green-700 text-sm font-medium hover:bg-green-50 transition"
-              >
-                Registrierung
-              </Link>
-              <span className="text-gray-400 text-sm">oder</span>
-              <Link
-                href="/auth/login"
-                className="px-4 py-2 rounded-lg bg-green-700 text-white text-sm font-medium hover:bg-green-800 transition"
-              >
-                Login
-              </Link>
+              {isLoggedIn ? (
+                <>
+                  <Link
+                    href="/profile"
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition border ${isProfileActive ? "bg-green-700 text-white border-green-700" : "bg-white text-green-700 border-green-700 hover:bg-green-50"}`}
+                  >
+                    Mein Profil
+                  </Link>
+                  <Link
+                    href="/products/my"
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition border ${isMyProductsActive ? "bg-green-700 text-white border-green-700" : "bg-white text-green-700 border-green-700 hover:bg-green-50"}`}
+                  >
+                    Meine Produkte
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={handleLogout}
+                    className="px-4 py-2 rounded-lg text-gray-500 text-sm font-medium hover:text-gray-700 transition"
+                  >
+                    Logout
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link
+                    href="/auth/register"
+                    className="px-4 py-2 rounded-lg border border-green-700 text-green-700 text-sm font-medium hover:bg-green-50 transition"
+                  >
+                    Registrierung
+                  </Link>
+                  <span className="text-gray-400 text-sm">oder</span>
+                  <Link
+                    href="/auth/login"
+                    className="px-4 py-2 rounded-lg bg-green-700 text-white text-sm font-medium hover:bg-green-800 transition"
+                  >
+                    Login
+                  </Link>
+                </>
+              )}
             </>
           )}
         </nav>

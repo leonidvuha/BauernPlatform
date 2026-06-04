@@ -13,6 +13,10 @@ export type Product = {
   lng?: string;
   created_at: string;
   updated_at?: string;
+  contact?: {
+    email: string;
+    phone: string | null;
+  };
 };
 
 export type ProductsResponse = {
