@@ -2,6 +2,9 @@ import { api } from "@/lib/api";
 import Image from "next/image";
 import ProductBreadcrumb from "@/components/ProductBreadcrumb";
 
+const FALLBACK_IMAGE =
+  "https://images.unsplash.com/photo-1488459716781-31db52582fe9?w=600&q=80";
+
 export default async function ProductPage({
   params,
 }: {
@@ -19,20 +22,18 @@ export default async function ProductPage({
       />
       <div className="relative border border-gray-300 rounded-xl p-8">
         <div className="flex gap-8">
+
           {/* Ліва частина — фото */}
           <div className="w-80 shrink-0">
-            {product.img_url ? (
+            <div className="w-full h-64 relative rounded-xl overflow-hidden">
               <Image
-                src={product.img_url}
+                src={product.img_url || FALLBACK_IMAGE}
                 alt={product.title}
                 fill
-                className="object-cover rounded-xl"
+                sizes="320px"
+                className="object-cover"
               />
-            ) : (
-              <div className="w-full h-64 bg-gray-200 rounded-xl flex items-center justify-center">
-                <span className="text-gray-400 text-6xl">🌿</span>
-              </div>
-            )}
+            </div>
           </div>
 
           {/* Права частина — інфо */}
