@@ -77,6 +77,11 @@ export default async function ProductPage({
                   Verkäufer kontaktieren
                 </span>
               </span>
+              {product.contact?.fullName && (
+                <p className="text-sm text-gray-900">
+                  👤 {product.contact.fullName}
+                </p>
+              )}
               <p className="text-sm text-gray-900">
                 📧 {product.contact?.email}
               </p>

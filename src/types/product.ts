@@ -16,6 +16,7 @@ export type Product = {
   contact?: {
     email: string;
     phone: string | null;
+    fullName?: string;
   };
 };
 
