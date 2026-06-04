@@ -2,17 +2,14 @@
 
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
+import { useCategoriesStore } from "@/store/categoriesStore";
 
-const CATEGORIES = [
-  { id: 1, name: "Gemüse", slug: "gemuse" },
-  { id: 2, name: "Obst und Beeren", slug: "obst-und-beeren" },
-  { id: 3, name: "BauernProdukte", slug: "bauern-produkte" },
-];
 
 export default function CategoryMenu() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const activeSlug = searchParams.get("category") ?? "";
+  const { categories } = useCategoriesStore();
 
   return (
     <div className="bg-green-700">
@@ -27,7 +24,7 @@ export default function CategoryMenu() {
         >
           Alle
         </Link>
-        {CATEGORIES.map((cat) => (
+        {categories.map((cat) => (
           <Link
             key={cat.id}
             href={`/products?category=${cat.slug}`}
