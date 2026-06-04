@@ -2,12 +2,17 @@
 
 import Link from "next/link";
 import { useState, type FormEvent } from "react";
+import { useAuthStore } from "@/store/authStore";
+import { useRouter } from "next/navigation";
+
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const { setUser } = useAuthStore();
+  const router = useRouter();
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -30,8 +35,12 @@ export default function LoginPage() {
           : (body?.message ?? "Anmeldung fehlgeschlagen");
         throw new Error(msg);
       }
-      localStorage.removeItem("bp_token");
-      window.location.assign("/");
+      const profileRes = await fetch("/api/users/profile", {
+        credentials: "include",
+      });
+      const userData = await profileRes.json();
+      setUser(userData);
+      router.push("/");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unbekannter Fehler");
       setLoading(false);
@@ -55,6 +64,7 @@ export default function LoginPage() {
             name="email"
             type="email"
             required
+            maxLength={255}
             autoComplete="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -75,11 +85,12 @@ export default function LoginPage() {
             name="password"
             type="password"
             required
-            minLength={8}
+            minLength={12}
+            maxLength={72}
             autoComplete="current-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder="Mindestens 8 Zeichen"
+            placeholder="Mindestens 12 Zeichen"
             className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-400"
           />
         </div>

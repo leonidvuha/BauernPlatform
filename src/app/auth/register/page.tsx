@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import { useAuthStore } from "@/store/authStore";
+import { useRouter } from "next/navigation";
 
 export default function RegisterPage() {
   const [fullName, setFullName] = useState("");
@@ -8,6 +10,8 @@ export default function RegisterPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const { setUser } = useAuthStore();
+  const router = useRouter();
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -34,8 +38,12 @@ export default function RegisterPage() {
 
         throw new Error(body?.message ?? "Registrierung fehlgeschlagen");
       }
-      localStorage.removeItem("bp_token");
-      window.location.assign("/");
+      const profileRes = await fetch("/api/users/profile", {
+        credentials: "include",
+      });
+      const userData = await profileRes.json();
+      setUser(userData);
+      router.push("/");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unbekannter Fehler");
       setLoading(false);
@@ -44,7 +52,7 @@ export default function RegisterPage() {
 
   return (
     <div className="max-w-md mx-auto mt-10 bg-white p-8 rounded-xl shadow">
-      <h1 className="text-2xl font-bold text-green-700 mb-6">Registration</h1>
+      <h1 className="text-2xl font-bold text-green-700 mb-6">Registrierung</h1>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <div>
@@ -60,6 +68,7 @@ export default function RegisterPage() {
             type="text"
             required
             minLength={2}
+            maxLength={50}
             autoComplete="name"
             value={fullName}
             onChange={(e) => setFullName(e.target.value)}
@@ -80,6 +89,7 @@ export default function RegisterPage() {
             name="email"
             type="email"
             required
+            maxLength={255}
             autoComplete="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -101,6 +111,7 @@ export default function RegisterPage() {
             type="password"
             required
             minLength={12}
+            maxLength={72}
             autoComplete="new-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
