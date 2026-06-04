@@ -14,6 +14,8 @@ export default function Header() {
   const isHome = pathname === "/";
   const isProfileActive = pathname === "/profile";
   const isMyProductsActive = pathname === "/products/my";
+  const isRegisterActive = pathname === "/auth/register";
+  const isLoginActive = pathname === "/auth/login";
 
   const handleLogout = async () => {
     await fetch("/api/auth/logout", {
@@ -108,14 +110,22 @@ export default function Header() {
                 <>
                   <Link
                     href="/auth/register"
-                    className="px-4 py-2 rounded-lg border border-green-700 text-green-700 text-sm font-medium hover:bg-green-50 transition"
+                    className={`px-4 py-2 rounded-lg border text-sm font-medium transition ${
+                      isRegisterActive
+                        ? "bg-green-700 text-white border-green-700"
+                        : "bg-white text-green-700 border-green-700 hover:bg-green-50"
+                    }`}
                   >
                     Registrierung
                   </Link>
                   <span className="text-gray-400 text-sm">oder</span>
                   <Link
                     href="/auth/login"
-                    className="px-4 py-2 rounded-lg bg-green-700 text-white text-sm font-medium hover:bg-green-800 transition"
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition border ${
+                      isLoginActive || (!isLoginActive && !isRegisterActive)
+                        ? "bg-green-700 text-white border-green-700"
+                        : "bg-white text-green-700 border-green-700 hover:bg-green-50"
+                    }`}
                   >
                     Login
                   </Link>

@@ -135,7 +135,7 @@ export default function RegisterPage() {
           disabled={loading}
           className="bg-green-600 text-white py-2 rounded-lg font-medium hover:bg-green-700 transition disabled:opacity-60 disabled:cursor-not-allowed"
         >
-          {loading ? "Wird gesendet…" : "Register"}
+          {loading ? "Wird gesendet…" : "Jetzt registrieren"}
         </button>
       </form>
     </div>
