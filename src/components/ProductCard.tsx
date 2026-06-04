@@ -10,7 +10,8 @@ const priceFormatter = new Intl.NumberFormat("de-DE", {
 const FALLBACK_IMAGE =
   "https://images.unsplash.com/photo-1488459716781-31db52582fe9?w=600&q=80";
 
-export default function ProductCard({ product }: { product: Product }) {
+export default function ProductCard({ product, categorySlug = ""  }: { product: Product;
+  categorySlug?: string; }) {
   return (
     <article className="bg-white rounded-2xl overflow-hidden flex flex-col shadow-md hover:shadow-lg transition-all duration-200 border border-gray-100">
       <div className="w-full h-36 overflow-hidden bg-gray-100 relative">
@@ -46,7 +47,7 @@ export default function ProductCard({ product }: { product: Product }) {
           </span>
         </div>
         <Link
-          href={`/products/${product.id}`}
+          href={`/products/${product.id}${categorySlug ? `?category=${categorySlug}` : ""}`}
           className="mt-2 block text-center bg-green-700 text-white py-2 rounded-xl font-medium hover:bg-green-800 transition text-sm"
         >
           Details anzeigen

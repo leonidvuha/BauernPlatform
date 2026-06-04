@@ -46,4 +46,14 @@ export const api = {
       return res.json();
     },
   },
+
+  categories: {
+    getAll: async () => {
+      const res = await fetch(`${BACKEND_URL}/api/categories`, {
+        next: { revalidate: 3600 },
+      });
+      if (!res.ok) throw new Error("Failed to fetch categories");
+      return res.json();
+    },
+  },
 };
