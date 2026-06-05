@@ -22,7 +22,6 @@ export default async function ProductPage({
       />
       <div className="relative border border-gray-300 rounded-xl p-8">
         <div className="flex gap-8">
-
           {/* Ліва частина — фото */}
           <div className="w-80 shrink-0">
             <div className="w-full h-64 relative rounded-xl overflow-hidden">
@@ -50,36 +49,30 @@ export default async function ProductPage({
               </p>
             </div>
 
-            {product.tags.length > 0 && (
-              <div className="flex flex-wrap gap-2">
-                {product.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="text-xs px-2 py-0.5 bg-green-50 text-green-700 rounded-full font-medium border border-green-100"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            )}
-
-            <div className="relative border border-gray-300 rounded-xl p-4 mt-4">
-              <span className="absolute -top-3 left-4 bg-white px-1">
-                <span className="inline-block bg-gray-600 text-white text-xs px-2 py-0.5 rounded">
-                  Beschreibung
-                </span>
-              </span>
+            <div className="relative border border-gray-300 rounded-xl p-4 mt-4 min-h-[205px]">
+              {product.tags.length > 0 && (
+                <div className="flex flex-wrap gap-2 mb-3">
+                  {product.tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="text-xs px-2 py-0.5 bg-green-700 text-white rounded font-medium border border-green-100"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              )}
               <p className="text-gray-900 text-sm">{product.description}</p>
             </div>
 
             <div className="relative border border-gray-300 rounded-xl p-4 mt-4">
               <span className="absolute -top-3 left-4 bg-white px-1">
-                <span className="inline-block bg-gray-600 text-white text-xs px-2 py-0.5 rounded">
+                <span className="inline-block bg-green-700 text-white text-xs px-2 py-0.5 rounded">
                   Verkäufer kontaktieren
                 </span>
               </span>
               {product.contact?.fullName && (
-                <p className="text-sm text-gray-900">
+                <p className="text-sm font-semibold text-gray-900">
                   👤 {product.contact.fullName}
                 </p>
               )}
