@@ -118,10 +118,17 @@ export default function RegisterPage() {
             placeholder="Mindestens 12 Zeichen"
             className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-400"
           />
-          <p className="text-xs text-gray-500 mt-1">
-            Min. 12 Zeichen, Groß- und Kleinbuchstaben, Zahl und Sonderzeichen
-            (!@#$%^&*_-+=?)
-          </p>
+          <div className="text-xs text-gray-500 mt-2 border border-gray-200 rounded-lg p-3">
+            <p className="font-medium mb-1">
+              Passwort sollte mindestens beinhalten:
+            </p>
+            <ul className="flex flex-col gap-1">
+              <li>• 1 Großbuchstabe</li>
+              <li>• 1 Kleinbuchstabe</li>
+              <li>• 1 Zahl</li>
+              <li>• 1 Sonderzeichen (!@#$%^&*_-+=?)</li>
+            </ul>
+          </div>
         </div>
 
         {error && (

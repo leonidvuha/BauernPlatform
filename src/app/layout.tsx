@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Header from "@/components/Header";
 import AuthProvider from "@/components/AuthProvider";
+import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
   title: "BauernPlatform",
@@ -19,6 +20,7 @@ export default function RootLayout({
         <AuthProvider>
           <Header />
           <main className="max-w-6xl mx-auto px-4 py-2">{children}</main>
+          <Footer />
         </AuthProvider>
       </body>
     </html>
