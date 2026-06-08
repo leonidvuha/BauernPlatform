@@ -18,7 +18,7 @@ export const api = {
       const params = new URLSearchParams({ page: String(page), limit: "20" });
       if (category) params.set("category_id", getCategoryId(category));
       const res = await fetch(`${BACKEND_URL}/api/products?${params}`, {
-        next: { revalidate: 60 },
+        next: { revalidate: 0 },
       });
       if (!res.ok) throw new Error("Failed to fetch products");
       return res.json();

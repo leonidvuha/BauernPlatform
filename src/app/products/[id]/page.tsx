@@ -54,10 +54,10 @@ export default async function ProductPage({
                 <div className="flex flex-wrap gap-2 mb-3">
                   {product.tags.map((tag) => (
                     <span
-                      key={tag}
+                      key={tag.id}
                       className="text-xs px-2 py-0.5 bg-green-700 text-white rounded font-medium border border-green-100"
                     >
-                      {tag}
+                      {tag.name}
                     </span>
                   ))}
                 </div>

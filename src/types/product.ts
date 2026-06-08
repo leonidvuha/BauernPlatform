@@ -7,10 +7,10 @@ export type Product = {
   price: string;
   unit: string;
   img_url: string;
-  tags: string[];
+  tags: { id: number; name: string }[];
   status?: string;
-  lat?: string;
-  lng?: string;
+  lat?: number;
+  lng?: number;
   created_at: string;
   updated_at?: string;
   contact?: {
