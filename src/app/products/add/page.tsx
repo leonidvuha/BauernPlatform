@@ -57,8 +57,8 @@ export default function AddProductPage() {
           .split(",")
           .map((t) => t.trim())
           .filter((t) => t.length > 0),
-        lat: Number(lat),
-        lng: Number(lng),
+        lat: Math.round(parseFloat(lat) * 1000000) / 1000000,
+        lng: Math.round(parseFloat(lng) * 1000000) / 1000000,
         img: img!,
       });
 
