@@ -1,14 +1,20 @@
 "use client";
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/authStore";
 import { useCategoriesStore } from "@/store/categoriesStore";
-import { createProduct } from "@/lib/productActions";
+import { updateProduct } from "@/lib/productActions";
+import { Product } from "@/types/product";
 
-export default function AddProductPage() {
+export default function EditProductPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const { user } = useAuthStore();
   const { categories } = useCategoriesStore();
   const router = useRouter();
+  const { id } = React.use(params);
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -18,11 +24,31 @@ export default function AddProductPage() {
   const [tags, setTags] = useState("");
   const [lat, setLat] = useState("");
   const [lng, setLng] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [img, setImg] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetch(`/api/products/${id}`, { credentials: "include" })
+      .then((res) => res.json())
+      .then((data: Product) => {
+        setTitle(data.title);
+        setDescription(data.description);
+        setPrice(data.price.toString());
+        setUnit(data.unit);
+        setCategoryId(data.category_id.toString());
+        setTags(data.tags.map((t) => t.name).join(", "));
+        setLat(data.lat?.toString() ?? "");
+        setLng(data.lng?.toString() ?? "");
+        setImg(data.img_url || null);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, [id]);
 
   if (!user) return null;
+  if (loading) return <div className="text-center mt-10">Wird geladen…</div>;
 
   const handleGetLocation = () => {
     if (!navigator.geolocation) {
@@ -41,13 +67,23 @@ export default function AddProductPage() {
     );
   };
 
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImg(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-    setLoading(true);
+    setSaving(true);
 
     try {
-      const res = await createProduct({
+      const res = await updateProduct(id, {
         title,
         description,
         price: Number(price),
@@ -59,41 +95,29 @@ export default function AddProductPage() {
           .filter((t) => t.length > 0),
         lat: Number(lat),
         lng: Number(lng),
-        img: img!,
+        img: img ?? undefined,
       });
 
       if (!res.ok) {
         const body = await res.json().catch(() => null);
-        throw new Error(body?.message ?? "Fehler beim Erstellen");
+        throw new Error(body?.message ?? "Fehler beim Speichern");
       }
 
       router.push("/products/my");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unbekannter Fehler");
-      setLoading(false);
+      setSaving(false);
     }
-  };
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setImg(reader.result as string);
-    };
-    reader.readAsDataURL(file);
   };
 
   return (
     <div className="max-w-2xl mx-auto mt-4 px-4">
       <h1 className="text-2xl font-bold text-green-700 mb-4">
-        Produkt hinzufügen
+        Produkt bearbeiten
       </h1>
       <hr className="border-gray-300 mb-4" />
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-        {/* Назва */}
         <div>
           <span className="inline-block bg-gray-600 text-white text-xs px-2 py-0.5 rounded">
             Produktname *
@@ -105,12 +129,10 @@ export default function AddProductPage() {
             required
             minLength={2}
             maxLength={100}
-            placeholder="z.B. Karotten „Nantaise“ oder süß-saure Kirschen"
             className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-green-700"
           />
         </div>
 
-        {/* Опис */}
         <div>
           <span className="inline-block bg-gray-600 text-white text-xs px-2 py-0.5 rounded">
             Beschreibung *
@@ -122,12 +144,10 @@ export default function AddProductPage() {
             minLength={10}
             maxLength={500}
             rows={3}
-            placeholder="Beschreiben Sie Ihr Produkt"
             className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-green-700 resize-none"
           />
         </div>
 
-        {/* Ціна і одиниця */}
         <div className="flex gap-4">
           <div className="flex-1">
             <span className="inline-block bg-gray-600 text-white text-xs px-2 py-0.5 rounded">
@@ -141,7 +161,6 @@ export default function AddProductPage() {
               min={0.01}
               max={10000}
               step={0.01}
-              placeholder="0.00"
               className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-green-700"
             />
           </div>
@@ -161,7 +180,6 @@ export default function AddProductPage() {
           </div>
         </div>
 
-        {/* Категорія */}
         <div>
           <span className="inline-block bg-gray-600 text-white text-xs px-2 py-0.5 rounded">
             Kategorie *
@@ -172,9 +190,7 @@ export default function AddProductPage() {
             required
             className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-green-700"
           >
-            <option value="" className="text-gray-400">
-              Kategorie wählen
-            </option>
+            <option value="">Kategorie wählen</option>
             {categories.map((cat) => (
               <option key={cat.id} value={cat.id}>
                 {cat.name}
@@ -183,7 +199,6 @@ export default function AddProductPage() {
           </select>
         </div>
 
-        {/* Теги */}
         <div>
           <span className="inline-block bg-gray-600 text-white text-xs px-2 py-0.5 rounded">
             Tags
@@ -192,18 +207,17 @@ export default function AddProductPage() {
             type="text"
             value={tags}
             onChange={(e) => setTags(e.target.value)}
-            placeholder="bio, organic, saisonal, knackig, süß..."
+            placeholder="bio, frisch, saisonal..."
             className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-green-700"
           />
           <p className="text-xs text-gray-500 mt-1">
             Mit Tags können Sie Geschmack, Form oder Besonderheiten Ihres
             Produkts beschreiben (z.B. bio, knackig, süß). Das hilft Käufern bei
-            der Auswahl und macht Ihr Produkt in der Suche leichter
-            auffindbar.Tags mussen durch Komma trennen.
+            der Auswahl und macht Ihr Produkt in der Suche leichter auffindbar.
+            Tags müssen durch Komma getrennt werden.
           </p>
         </div>
 
-        {/* Координати */}
         <div>
           <span className="inline-block bg-gray-600 text-white text-xs px-2 py-0.5 rounded">
             Product Koordinaten *
@@ -211,7 +225,7 @@ export default function AddProductPage() {
           <button
             type="button"
             onClick={handleGetLocation}
-            className="w-full border border-gray-300 text-grey-900 text-sm px-4 py-2 rounded-lg focus:border-green-700"
+            className="w-full border border-gray-300 text-gray-900 text-sm px-4 py-2 rounded-lg focus:border-green-700"
           >
             📍 Meinen Standort verwenden
           </button>
@@ -220,7 +234,6 @@ export default function AddProductPage() {
               {error}
             </p>
           )}
-
           <div className="flex gap-4">
             <input
               type="text"
@@ -245,24 +258,25 @@ export default function AddProductPage() {
           </p>
         </div>
 
-        {/* Фото */}
         <div>
           <span className="inline-block bg-gray-600 text-white text-xs px-2 py-0.5 rounded">
-            Produkt Foto *
+            Produkt Foto
           </span>
           <label className="flex items-center gap-3 w-full border border-gray-300 rounded-lg px-4 py-2 cursor-pointer hover:bg-gray-50 transition">
             <span className="text-gray-400 text-sm">🖼️</span>
             <span className="text-sm text-gray-400">
-              {img ? "Foto ausgewählt ✓" : "Foto auswählen..."}
+              {img ? "Foto ausgewählt ✓" : "Neues Foto auswählen..."}
             </span>
             <input
               type="file"
               accept="image/*"
-              required
               onChange={handleImageChange}
               className="hidden"
             />
           </label>
+          <p className="text-xs text-gray-500 mt-1">
+            Lassen Sie dieses Feld leer, um das aktuelle Foto beizubehalten.
+          </p>
         </div>
 
         <p className="text-xs text-gray-500">* Pflichtfelder</p>
@@ -270,10 +284,10 @@ export default function AddProductPage() {
         <div className="flex gap-3">
           <button
             type="submit"
-            disabled={loading}
+            disabled={saving}
             className="bg-green-700 text-white text-sm px-6 py-2 rounded-lg hover:bg-green-800 transition disabled:opacity-60"
           >
-            {loading ? "Wird gespeichert…" : "Produkt erstellen"}
+            {saving ? "Wird gespeichert…" : "Speichern"}
           </button>
           <button
             type="button"
