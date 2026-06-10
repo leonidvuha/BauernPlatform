@@ -61,7 +61,7 @@ export default function RegisterPage() {
             htmlFor="fullName"
             className="block text-sm font-medium text-gray-700 mb-1"
           >
-            Fullname
+            Name
           </label>
           <input
             id="fullName"
@@ -83,7 +83,7 @@ export default function RegisterPage() {
             htmlFor="email"
             className="block text-sm font-medium text-gray-700 mb-1"
           >
-            Email
+            E-Mail
           </label>
           <input
             id="email"
@@ -104,7 +104,7 @@ export default function RegisterPage() {
             htmlFor="password"
             className="block text-sm font-medium text-gray-700 mb-1"
           >
-            Password
+            Passwort
           </label>
           <div className="relative">
             <input
