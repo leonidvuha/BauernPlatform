@@ -15,10 +15,15 @@ export default async function ProductsSection({ page, category }: Props) {
   let categories: { id: number; name: string; slug: string }[] = [];
 
   try {
-    const [data, categoriesData] = await Promise.all([
-      api.products.getAll(page, category),
-      api.categories.getAll(),
-    ]);
+    const categoriesData = await api.categories.getAll();
+    const categoryId = category
+      ? categoriesData.find(
+          (c: { slug: string; id: number }) => c.slug === category,
+        )?.id
+      : undefined;
+    
+
+    const data = await api.products.getAll(page, categoryId);
     products = data.products;
     meta = data.meta;
     categories = categoriesData;
@@ -30,7 +35,10 @@ export default async function ProductsSection({ page, category }: Props) {
     <section className="mt-8">
       <div className="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-4">
         {products.map((product) => {
-          const categorySlug = category || categories.find(c => c.id === product.category_id)?.slug || "";
+          const categorySlug =
+            category ||
+            categories.find((c) => c.id === product.category_id)?.slug ||
+            "";
           return (
             <ProductCard
               key={product.id}

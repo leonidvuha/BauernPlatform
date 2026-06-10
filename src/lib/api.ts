@@ -2,21 +2,12 @@ import type { Product, ProductsResponse } from "@/types/product";
 import { UserProfile } from "@/types/user";
 
 const BACKEND_URL = process.env.BACKEND_URL ?? "http://localhost:8080";
-const CATEGORY_MAP: Record<string, string> = {
-  gemuse: "1",
-  "obst-und-beeren": "2",
-  "bauern-produkte": "3",
-};
-
-function getCategoryId(slug: string): string {
-  return CATEGORY_MAP[slug] ?? "";
-}
 
 export const api = {
   products: {
-    getAll: async (page = 1, category = ""): Promise<ProductsResponse> => {
+    getAll: async (page = 1, categoryId?: number): Promise<ProductsResponse> => {
       const params = new URLSearchParams({ page: String(page), limit: "20" });
-      if (category) params.set("category_id", getCategoryId(category));
+      if (categoryId) params.set("category_id", String(categoryId));
       const res = await fetch(`${BACKEND_URL}/api/products?${params}`, {
         next: { revalidate: 0 },
       });
