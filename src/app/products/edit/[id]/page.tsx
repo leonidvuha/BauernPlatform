@@ -5,6 +5,7 @@ import { useAuthStore } from "@/store/authStore";
 import { useCategoriesStore } from "@/store/categoriesStore";
 import { updateProduct } from "@/lib/productActions";
 import { Product } from "@/types/product";
+import { compressImage } from "@/lib/compressImage";
 
 export default function EditProductPage({
   params,
@@ -67,15 +68,17 @@ export default function EditProductPage({
     );
   };
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setImg(reader.result as string);
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+  
+      try {
+        const compressed = await compressImage(file);
+        setImg(compressed);
+      } catch {
+        setError("Fehler beim Verarbeiten des Bildes");
+      }
     };
-    reader.readAsDataURL(file);
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
