@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/authStore";
 import { useCategoriesStore } from "@/store/categoriesStore";
 import { createProduct } from "@/lib/productActions";
+import { compressImage } from "@/lib/compressImage";
 
 export default function AddProductPage() {
   const { user } = useAuthStore();
@@ -74,15 +75,16 @@ export default function AddProductPage() {
     }
   };
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setImg(reader.result as string);
-    };
-    reader.readAsDataURL(file);
+    try {
+      const compressed = await compressImage(file);
+      setImg(compressed);
+    } catch {
+      setError("Fehler beim Verarbeiten des Bildes");
+    }
   };
 
   return (
