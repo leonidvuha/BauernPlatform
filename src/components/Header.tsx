@@ -12,10 +12,13 @@ export default function Header() {
 
   const pathname = usePathname();
   const isHome = pathname === "/";
-  const isProfileActive = pathname === "/profile";
-  const isMyProductsActive = pathname === "/products/my";
   const isRegisterActive = pathname === "/auth/register";
   const isLoginActive = pathname === "/auth/login";
+  const isProfileActive = pathname.startsWith("/profile");
+  const isMyProductsActive =
+    pathname === "/products/my" ||
+    pathname.startsWith("/products/edit") ||
+    pathname.startsWith("/products/add");
 
   const handleLogout = async () => {
     await fetch("/api/auth/logout", {
