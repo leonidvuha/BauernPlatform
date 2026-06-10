@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useAuthStore } from "@/store/authStore";
 import Image from "next/image";
 import Link from "next/link";
@@ -8,7 +8,7 @@ import { deleteProduct, toggleProductStatus } from "@/lib/productActions";
 import { useSearchParams } from "next/navigation";
 import Pagination from "@/components/Pagination";
 
-export default function MyProductsPage() {
+function MyProductsContent() {
   const { user } = useAuthStore();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -238,5 +238,13 @@ export default function MyProductsPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function MyProductsPage() {
+  return (
+    <Suspense fallback={<div className="text-center mt-10">Wird geladen…</div>}>
+      <MyProductsContent />
+    </Suspense>
   );
 }
