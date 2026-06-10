@@ -5,12 +5,22 @@ import Image from "next/image";
 import Link from "next/link";
 import { Product } from "@/types/product";
 import { deleteProduct, toggleProductStatus } from "@/lib/productActions";
+import { useSearchParams } from "next/navigation";
+import Pagination from "@/components/Pagination";
 
 export default function MyProductsPage() {
   const { user } = useAuthStore();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const searchParams = useSearchParams();
+  const page = Number(searchParams.get("page")) || 1;
+  const [meta, setMeta] = useState({
+    current_page: 1,
+    per_page: 10,
+    total_items: 0,
+    total_pages: 1,
+  });
 
   const handleToggleStatus = async (id: string, isActive: boolean) => {
     await toggleProductStatus(id, !isActive);
@@ -30,14 +40,24 @@ export default function MyProductsPage() {
 
   useEffect(() => {
     if (!user) return;
-    fetch("/api/products/my", { credentials: "include" })
-      .then((res) => res.json())
-      .then((data) => {
+
+    const loadProducts = async () => {
+      setLoading(true);
+      try {
+        const res = await fetch(`/api/products/my?page=${page}&limit=10`, {
+          credentials: "include",
+        });
+        const data = await res.json();
         setProducts(data.products);
+        setMeta(data.meta);
+      } catch {
+        // помилка завантаження
+      } finally {
         setLoading(false);
-      })
-      .catch(() => setLoading(false));
-  }, [user]);
+      }
+    };
+    loadProducts();
+  }, [user, page]);
 
   if (!user) return null;
   if (loading) return <div className="text-center mt-10">Wird geladen…</div>;
@@ -186,6 +206,7 @@ export default function MyProductsPage() {
           ))}
         </div>
       )}
+      {meta.total_pages > 1 && <Pagination meta={meta} />}
       {deleteId && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
           <div className="bg-white rounded-xl max-w-sm w-full mx-4 shadow-xl overflow-hidden">
