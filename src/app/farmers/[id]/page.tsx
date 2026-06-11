@@ -1,6 +1,7 @@
 import { api, FarmerResponse } from '@/lib/api';
 import ProductCard from '@/components/ProductCard';
 import { Product } from '@/types/product';
+import Image from 'next/image';
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -18,65 +19,101 @@ export default async function FarmerDetailsPage({ params }: PageProps) {
   let farmerData: FarmerResponse | null = null;
 
   try {
-    // Делаем запрос к нашему новому методу в api.ts
     farmerData = await api.users.getFarmerById(id);
-
-    // Принудительно приводим к типу, который ждет страница,
-    // чтобы обойти строгие проверки TypeScript
   } catch (e) {
     console.error('Fehler beim Laden des Landwirt-Profils:', e);
   }
+
   if (!farmerData)
-    return <div className="text-center mt-10">Landwirt nicht gefunden</div>;
+    return (
+      <div className="text-center mt-10 text-gray-500">
+        Landwirt nicht gefunden
+      </div>
+    );
 
   return (
-    <div className="max-w-4xl mx-auto mt-6 px-4">
-      <div className="bg-white border border-gray-200 rounded-2xl p-8 shadow-xs mb-8 flex flex-col md:flex-row gap-8">
-        <div className="flex-1">
-          <h1 className="text-3xl font-bold text-green-700 mb-4">
-            🧑‍🌾 {farmerData.fullName}
-          </h1>
-
-          <div className="mb-6">
-            <span className="inline-block bg-gray-600 text-white text-xs px-2 py-0.5 rounded mb-2">
-              Über uns
-            </span>
-            <p className="text-sm text-gray-800 leading-relaxed">
-              {farmerData.about_me ||
-                'Dieser Landwirt hat noch keine Beschreibung hinzugefügt.'}
-            </p>
+    <div className="max-w-6xl mx-auto mt-10 px-4">
+      {/* Крупный заголовок названия фермы капсом, без смайликов */}
+      <h1 className="text-4xl font-extrabold text-green-700 uppercase tracking-wide mb-8 text-center md:text-left">
+        {farmerData.fullName ||
+          farmerData.contacts?.email?.split('@')[0] ||
+          'LANDWIRT PROFIL'}
+      </h1>
+      {/* Главная двухколоночная сетка */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12 items-start">
+        {/* ЛЕВАЯ КОЛОНКА: Описание фермера */}
+        <div className="md:col-span-2 bg-white border border-gray-200 rounded-2xl p-8 shadow-xs min-h-[320px] flex flex-col justify-between">
+          <div>
+            <div className="mb-6">
+              {/* Надпись убрали, остался только сам текст описания */}
+              <p className="text-base text-gray-800 leading-relaxed">
+                {farmerData.about_me ||
+                  'Dieser Landwirt hat noch keine Beschreibung hinzugefügt.'}
+              </p>
+            </div>
           </div>
 
+          {/* Координаты */}
           {farmerData.coordinates?.lat && farmerData.coordinates?.lng && (
-            <p className="text-xs text-gray-500 mb-2">
-              📍 Standort: {farmerData.coordinates.lat},{' '}
-              {farmerData.coordinates.lng}
-            </p>
+            <div className="pt-4 border-t border-gray-100">
+              <p className="text-xs text-gray-500">
+                📍 Standort: {farmerData.coordinates.lat},{' '}
+                {farmerData.coordinates.lng}
+              </p>
+            </div>
           )}
         </div>
+        {/* ПРАВАЯ КОЛОНКА: Компактный аватар + Контакты */}
+        <div className="bg-white border border-gray-200 rounded-2xl p-4 shadow-xs flex flex-col justify-between h-full">
+          {/* Верхняя часть: ультра-компактный круглый аватар */}
+          <div className="flex flex-col items-center justify-center mb-4">
+            <div className="relative w-28 h-28 rounded-full overflow-hidden bg-[#e5e7eb] border border-gray-300 flex items-center justify-center shadow-inner">
+              {farmerData.avatarUrl ? (
+                <Image
+                  src={farmerData.avatarUrl}
+                  alt={farmerData.fullName || 'Landwirt'}
+                  fill
+                  unoptimized
+                  className="object-cover"
+                />
+              ) : (
+                /* Тот самый Юлин человечек-эмодзи */
+                <span className="text-4xl text-gray-400 select-none">👤</span>
+              )}
+            </div>
 
-        <div className="w-full md:w-72 bg-gray-50 border border-gray-200 rounded-xl p-5 h-fit">
-          <span className="inline-block bg-green-600 text-white text-xs px-2 py-0.5 rounded mb-3">
-            Kontakt
-          </span>
-          <p className="text-sm text-gray-900 mb-1">
-            ✉️ {farmerData.contacts.email}
-          </p>
-          {farmerData.contacts.phone && (
-            <p className="text-sm text-gray-900">
-              📞 {farmerData.contacts.phone}
-            </p>
-          )}
-        </div>
-      </div>
+            <span className="text-xs text-green-700 font-medium bg-green-50 px-2 py-0.5 rounded-full mt-2 block">
+              ✓ Verifizierter Landwirt
+            </span>
+          </div>
 
+          {/* Нижняя часть: Контакты (минималистичная серая плашка) */}
+          <div className="bg-gray-50 border border-gray-100 rounded-xl p-3 shadow-inner">
+            <span className="inline-block bg-green-600 text-white text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded mb-1.5 font-semibold">
+              Kontakt
+            </span>
+            <div className="space-y-1 text-xs text-gray-900">
+              <p className="break-all flex items-center gap-1.5">
+                <span>✉️</span> {farmerData.contacts.email}
+              </p>
+              {farmerData.contacts.phone && (
+                <p className="flex items-center gap-1.5">
+                  <span>📞</span> {farmerData.contacts.phone}
+                </p>
+              )}
+            </div>
+          </div>
+        </div>{' '}
+        {/* Конец правой колонки */}
+      </div>{' '}
+      {/* Конец главной сетки */}
+      {/* Список товаров */}
       <h2 className="text-xl font-bold text-gray-800 mb-4">
         Produkte dieses Landwirts
       </h2>
       <hr className="border-gray-200 mb-6" />
-
       {farmerData.products.length === 0 ? (
-        <p className="text-gray-500 text-center py-6">
+        <p className="text-gray-500 text-center py-8 bg-white border border-gray-200 rounded-2xl shadow-xs">
           Dieser Landwirt hat aktuell keine aktiven Produkte.
         </p>
       ) : (
@@ -92,7 +129,7 @@ export default async function FarmerDetailsPage({ params }: PageProps) {
               contact: {
                 email: farmerData?.contacts?.email || '',
                 phone: farmerData?.contacts?.phone || null,
-                fullName: farmerData.fullName || '',
+                fullName: farmerData?.fullName || '',
               },
               category_id: 0,
               description: '',

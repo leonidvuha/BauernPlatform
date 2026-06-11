@@ -5,6 +5,7 @@ export interface FarmerResponse {
   id: string;
   fullName: string;
   about_me: string | null;
+  avatarUrl?: string | null;
   contacts: {
     email: string;
     phone: string | null;

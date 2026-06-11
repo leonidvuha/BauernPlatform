@@ -88,12 +88,10 @@ export default async function ProductPage({
               {product.owner_id && (
                 <div className="mt-4">
                   <Link
-                    id="btn-more-about-farmer"
                     href={`/farmers/${product.owner_id}`}
-                    className="inline-flex items-center justify-center w-full gap-2 bg-green-700 hover:bg-green-800 text-white font-medium px-4 py-2.5 rounded-lg text-xs transition duration-150 shadow-sm cursor-pointer"
+                    className="inline-block bg-green-600 text-white font-medium py-1.5 px-4 rounded-lg text-xs text-center transition-colors hover:bg-green-700"
                   >
-                    <span>🧑‍🌾</span>
-                    Mehr über diesen Bauern erfahren
+                    Über unseren Landwirt
                   </Link>
                 </div>
               )}
