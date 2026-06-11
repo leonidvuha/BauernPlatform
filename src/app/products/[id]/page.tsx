@@ -1,9 +1,10 @@
-import { api } from "@/lib/api";
-import Image from "next/image";
-import ProductBreadcrumb from "@/components/ProductBreadcrumb";
+import { api } from '@/lib/api';
+import Image from 'next/image';
+import ProductBreadcrumb from '@/components/ProductBreadcrumb';
+import Link from 'next/link';
 
 const FALLBACK_IMAGE =
-  "https://images.unsplash.com/photo-1488459716781-31db52582fe9?w=600&q=80";
+  'https://images.unsplash.com/photo-1488459716781-31db52582fe9?w=600&q=80';
 
 export default async function ProductPage({
   params,
@@ -42,7 +43,7 @@ export default async function ProductPage({
                 {product.title}
               </h1>
               <p className="text-2xl font-bold text-gray-900">
-                {product.price} €{" "}
+                {product.price} €{' '}
                 <span className="text-sm font-normal text-gray-500">
                   / {product.unit}
                 </span>
@@ -83,6 +84,16 @@ export default async function ProductPage({
                 <p className="text-sm text-gray-900">
                   📞 {product.contact.phone}
                 </p>
+              )}
+              {product.owner_id && (
+                <div className="mt-4">
+                  <Link
+                    href={`/farmers/${product.owner_id}`}
+                    className="inline-block bg-green-600 text-white font-medium py-1.5 px-4 rounded-lg text-xs text-center transition-colors hover:bg-green-700"
+                  >
+                    Über unseren Landwirt
+                  </Link>
+                </div>
               )}
             </div>
           </div>
