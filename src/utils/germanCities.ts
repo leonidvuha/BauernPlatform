@@ -1,0 +1,48 @@
+export type GermanCity = {
+  name: string;
+  lat: number;
+  lng: number;
+};
+
+export const GERMAN_CITIES: GermanCity[] = [
+  { name: "Aachen", lat: 50.7753, lng: 6.0839 },
+  { name: "Augsburg", lat: 48.3717, lng: 10.8983 },
+  { name: "Berlin", lat: 52.5200, lng: 13.4050 },
+  { name: "Bielefeld", lat: 52.0211, lng: 8.5316 },
+  { name: "Bochum", lat: 51.4818, lng: 7.2162 },
+  { name: "Bonn", lat: 50.7374, lng: 7.0982 },
+  { name: "Bremen", lat: 53.0793, lng: 8.8017 },
+  { name: "Braunschweig", lat: 52.2689, lng: 10.5268 },
+  { name: "Chemnitz", lat: 50.8278, lng: 12.9214 },
+  { name: "Dortmund", lat: 51.5136, lng: 7.4653 },
+  { name: "Dresden", lat: 51.0509, lng: 13.7383 },
+  { name: "Duisburg", lat: 51.4349, lng: 6.7623 },
+  { name: "Düsseldorf", lat: 51.2217, lng: 6.7762 },
+  { name: "Erfurt", lat: 50.9787, lng: 11.0328 },
+  { name: "Essen", lat: 51.4556, lng: 7.0116 },
+  { name: "Frankfurt am Main", lat: 50.1109, lng: 8.6821 },
+  { name: "Freiburg im Breisgau", lat: 47.9990, lng: 7.8421 },
+  { name: "Gelsenkirchen", lat: 51.5177, lng: 7.0857 },
+  { name: "Halle (Saale)", lat: 51.4825, lng: 11.9697 },
+  { name: "Hamburg", lat: 53.5753, lng: 9.9955 },
+  { name: "Hannover", lat: 52.3759, lng: 9.7320 },
+  { name: "Karlsruhe", lat: 49.0069, lng: 8.4037 },
+  { name: "Kassel", lat: 51.3127, lng: 9.4797 },
+  { name: "Kiel", lat: 54.3233, lng: 10.1394 },
+  { name: "Köln", lat: 50.9333, lng: 6.9500 },
+  { name: "Krefeld", lat: 51.3388, lng: 6.5853 },
+  { name: "Leipzig", lat: 51.3397, lng: 12.3731 },
+  { name: "Lübeck", lat: 53.8655, lng: 10.6866 },
+  { name: "Magdeburg", lat: 52.1205, lng: 11.6276 },
+  { name: "Mainz", lat: 49.9929, lng: 8.2473 },
+  { name: "Mannheim", lat: 49.4875, lng: 8.4660 },
+  { name: "München", lat: 48.1374, lng: 11.5755 },
+  { name: "Mönchengladbach", lat: 51.1805, lng: 6.4428 },
+  { name: "Münster", lat: 51.9607, lng: 7.6261 },
+  { name: "Nürnberg", lat: 49.4539, lng: 11.0775 },
+  { name: "Oberhausen", lat: 51.4963, lng: 6.8637 },
+  { name: "Rostock", lat: 54.0924, lng: 12.0991 },
+  { name: "Stuttgart", lat: 48.7758, lng: 9.1829 },
+  { name: "Wiesbaden", lat: 50.0782, lng: 8.2397 },
+  { name: "Wuppertal", lat: 51.2562, lng: 7.1508 },
+];

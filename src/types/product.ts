@@ -27,5 +27,7 @@ export type ProductsResponse = {
     per_page: number;
     total_items: number;
     total_pages: number;
+    fallback?: boolean;
+    fallback_word?: string;
   };
 };
