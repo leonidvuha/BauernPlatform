@@ -45,6 +45,8 @@ export const api = {
     ): Promise<ProductsResponse> => {
       const params = new URLSearchParams({ page: String(page), limit: '20' });
       if (categoryId) params.set('category_id', String(categoryId));
+      const params = new URLSearchParams({ page: String(page), limit: "20" });
+      if (categoryId) params.set("category_id", String(categoryId));
       const res = await fetch(`${BACKEND_URL}/api/products?${params}`, {
         next: { revalidate: 0 },
       });
@@ -61,6 +63,33 @@ export const api = {
         next: { revalidate: 60 },
       });
       if (!res.ok) throw new Error('Failed to fetch product');
+      return res.json();
+    },
+    search: async (params: {
+      page?: number;
+      categoryId?: number;
+      search?: string;
+      lat?: number;
+      lng?: number;
+      radius?: number;
+    }): Promise<ProductsResponse> => {
+      const { page = 1, categoryId, search, lat, lng, radius } = params;
+      const urlParams = new URLSearchParams({
+        page: String(page),
+        limit: "12",
+      });
+      if (categoryId) urlParams.set("category_id", String(categoryId));
+      if (search) urlParams.set("search", search);
+      if (lat) urlParams.set("lat", String(lat));
+      if (lng) urlParams.set("lng", String(lng));
+      if (radius) urlParams.set("radius", String(radius));
+      const res = await fetch(
+        `${BACKEND_URL}/api/products/search?${urlParams}`,
+        {
+          next: { revalidate: 0 },
+        },
+      );
+      if (!res.ok) throw new Error("Failed to fetch products");
       return res.json();
     },
   },
