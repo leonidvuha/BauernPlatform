@@ -12,8 +12,11 @@ const CATEGORY_IMAGES: Record<string, string> = {
     "https://images.unsplash.com/photo-1598170845058-32b9d6a5da37?w=400&q=80",
   "obst-und-beeren":
     "https://images.unsplash.com/photo-1464965911861-746a04b4bca6?w=400&q=80",
-  "bauern-produkte":
+  "milch-produkte":
     "https://images.unsplash.com/photo-1486297678162-eb2a19b0a32d?w=400&q=80",
+  "fleisch-produkte":
+    "https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?w=400&q=80",
+  eier: "https://images.unsplash.com/photo-1582722872445-44dc5f7e3c8f?w=400&q=80",
 };
 
 const FALLBACK_IMAGE =
