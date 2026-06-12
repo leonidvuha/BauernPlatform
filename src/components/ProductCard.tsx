@@ -29,7 +29,7 @@ export default function ProductCard({ product, categorySlug = ""  }: { product: 
             {product.tags.slice(0, 2).map((tag) => (
               <span
                 key={tag.id}
-                className="text-xs px-2 py-0.5 bg-green-50 text-green-700 rounded-full font-medium border border-green-100"
+                className="text-xs px-2 py-0.5 bg-green-700 text-white rounded font-medium"
               >
                 {tag.name}
               </span>
