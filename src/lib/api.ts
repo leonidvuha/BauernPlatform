@@ -1,5 +1,7 @@
 import type { Product, ProductsResponse } from "@/types/product";
 import { UserProfile } from "@/types/user";
+import type { FarmerProfile, FarmersResponse } from "@/types/farmer";
+export type { FarmerInfo, FarmerProfile, FarmersResponse } from "@/types/farmer";
 
 const BACKEND_URL = process.env.BACKEND_URL ?? "http://localhost:8080";
 
@@ -40,7 +42,7 @@ export const api = {
       const { page = 1, categoryId, search, lat, lng, radius } = params;
       const urlParams = new URLSearchParams({
         page: String(page),
-        limit: "12",
+        limit: "20",
       });
       if (categoryId) urlParams.set("category_id", String(categoryId));
       if (search) urlParams.set("search", search);
@@ -74,6 +76,23 @@ export const api = {
         next: { revalidate: 3600 },
       });
       if (!res.ok) throw new Error("Failed to fetch categories");
+      return res.json();
+    },
+  },
+
+  farmers: {
+    getAll: async (page = 1): Promise<FarmersResponse> => {
+      const res = await fetch(`${BACKEND_URL}/api/farmers?page=${page}`, {
+        cache: "no-store",
+      });
+      if (!res.ok) throw new Error("Failed to fetch farmers");
+      return res.json();
+    },
+    getById: async (id: string): Promise<FarmerProfile> => {
+      const res = await fetch(`${BACKEND_URL}/api/farmers/${id}`, {
+        cache: "no-store",
+      });
+      if (!res.ok) throw new Error("Failed to fetch farmer");
       return res.json();
     },
   },
