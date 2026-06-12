@@ -1,6 +1,7 @@
 import { api } from "@/lib/api";
 import Image from "next/image";
 import ProductBreadcrumb from "@/components/ProductBreadcrumb";
+import Link from "next/link";
 
 const FALLBACK_IMAGE =
   "https://images.unsplash.com/photo-1488459716781-31db52582fe9?w=600&q=80";
@@ -83,6 +84,15 @@ export default async function ProductPage({
                 <p className="text-sm text-gray-900">
                   📞 {product.contact.phone}
                 </p>
+              )}
+
+              {product.owner_id && (
+                <Link
+                  href={`/farmers/${product.owner_id}`}
+                  className="mt-3 block text-right bg-green-700 text-white text-xs font-medium px-3 py-1.5 rounded-lg hover:bg-green-800 transition w-fit ml-auto"
+                >
+                  Alle Produkte des Landwirts →
+                </Link>
               )}
             </div>
           </div>
